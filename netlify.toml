@@ -1,0 +1,5 @@
+[redirects]]
+  from = "https://jocular-yeot-b76b98.netlify.app/*"
+  to = "https://eesolutions.com.mx/:splat"
+  status = 301
+  force = true
