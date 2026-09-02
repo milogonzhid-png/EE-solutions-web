@@ -142,47 +142,6 @@ export type Database = {
         }
         Relationships: []
       }
-      entregables_cliente: {
-        Row: {
-          actualizado_en: string
-          cliente_id: string
-          creado_en: string
-          id: string
-          nombre: string
-          storage_path: string | null
-          tipo: Database["public"]["Enums"]["tipo_entregable"]
-          url_externa: string | null
-        }
-        Insert: {
-          actualizado_en?: string
-          cliente_id: string
-          creado_en?: string
-          id?: string
-          nombre: string
-          storage_path?: string | null
-          tipo: Database["public"]["Enums"]["tipo_entregable"]
-          url_externa?: string | null
-        }
-        Update: {
-          actualizado_en?: string
-          cliente_id?: string
-          creado_en?: string
-          id?: string
-          nombre?: string
-          storage_path?: string | null
-          tipo?: Database["public"]["Enums"]["tipo_entregable"]
-          url_externa?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "entregables_cliente_cliente_id_fkey"
-            columns: ["cliente_id"]
-            isOneToOne: false
-            referencedRelation: "clientes"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       gastos: {
         Row: {
           categoria: string
@@ -348,12 +307,6 @@ export type Database = {
       perfil_cliente: "1" | "2" | "3"
       responsable_pendiente: "nosotros" | "cliente"
       rol_usuario: "admin" | "cliente"
-      tipo_entregable:
-        | "ficha_pago"
-        | "bienvenida"
-        | "agreement"
-        | "demo_web"
-        | "otro"
     }
     CompositeTypes: {
       [_ in never]: never

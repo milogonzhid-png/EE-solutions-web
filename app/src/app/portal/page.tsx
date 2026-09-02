@@ -7,7 +7,6 @@ import {
   indiceDeFase,
   FASES,
 } from "@/lib/fases";
-import { entregablesConUrl, NOMBRES_TIPO_ENTREGABLE } from "@/lib/entregables";
 
 export const revalidate = 0;
 
@@ -54,8 +53,6 @@ export default async function PortalPage() {
       </p>
     );
   }
-
-  const entregables = await entregablesConUrl(supabase, cliente.id, cliente.slug);
 
   const abiertos = (pendientes ?? []).filter((p) => !p.resuelto);
   const deTuParte = abiertos.filter((p) => p.depende_de === "cliente");
@@ -183,36 +180,6 @@ export default async function PortalPage() {
         <p className="text-sm text-white/40">
           No hay pendientes registrados por ahora.
         </p>
-      )}
-
-      {entregables.length > 0 && (
-        <section>
-          <h2 className="mb-3 text-sm font-medium text-white/70">
-            Tus documentos
-          </h2>
-          <ul className="space-y-2">
-            {entregables.map((e) => (
-              <li key={e.id}>
-                <a
-                  href={e.urlAbrir ?? undefined}
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-disabled={!e.urlAbrir}
-                  className={`flex items-center justify-between rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm ${
-                    e.urlAbrir
-                      ? "hover:border-[#21C7EA]/40 hover:text-[#21C7EA]"
-                      : "cursor-not-allowed opacity-50"
-                  }`}
-                >
-                  <span>{NOMBRES_TIPO_ENTREGABLE[e.tipo] ?? e.tipo}</span>
-                  <span className="text-xs text-white/40">
-                    {e.urlAbrir ? "Ver ↗" : "Sin URL"}
-                  </span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </section>
       )}
 
       {cliente.dominio && (

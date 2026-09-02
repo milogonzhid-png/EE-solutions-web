@@ -3,7 +3,6 @@ import { createClient } from "@/lib/supabase/server";
 import { formatoMXN } from "@/lib/dinero";
 import { NOMBRES_FASE, NOMBRES_ESTADO, COLOR_ESTADO } from "@/lib/fases";
 import { LineaDeFases } from "@/components/LineaDeFases";
-import { entregablesConUrl, NOMBRES_TIPO_ENTREGABLE } from "@/lib/entregables";
 
 export const revalidate = 0;
 
@@ -23,7 +22,7 @@ export default async function DetalleClientePage({
 
   if (!cliente) notFound();
 
-  const [{ data: pendientes }, { data: cobros }, entregables] = await Promise.all([
+  const [{ data: pendientes }, { data: cobros }] = await Promise.all([
     supabase
       .from("pendientes")
       .select("*")
@@ -34,7 +33,6 @@ export default async function DetalleClientePage({
       .select("*")
       .eq("cliente_id", cliente.id)
       .order("fecha_emision", { ascending: false }),
-    entregablesConUrl(supabase, cliente.id, cliente.slug),
   ]);
 
   return (
@@ -109,43 +107,6 @@ export default async function DetalleClientePage({
               )}
             </tbody>
           </table>
-        </div>
-      </section>
-
-      <section>
-        <h2 className="mb-3 text-sm font-medium text-white/70">Entregables</h2>
-        <div className="grid gap-2 sm:grid-cols-2">
-          {entregables.map((e) => (
-            <a
-              key={e.id}
-              href={e.urlAbrir ?? undefined}
-              target="_blank"
-              rel="noreferrer"
-              aria-disabled={!e.urlAbrir}
-              className={`flex items-center justify-between rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm ${
-                e.urlAbrir
-                  ? "hover:border-[#21C7EA]/40 hover:text-[#21C7EA]"
-                  : "cursor-not-allowed opacity-50"
-              }`}
-            >
-              <span>
-                <span className="text-white/45">
-                  {NOMBRES_TIPO_ENTREGABLE[e.tipo] ?? e.tipo}
-                </span>{" "}
-                · {e.nombre}
-              </span>
-              <span className="text-xs text-white/40">
-                {e.urlAbrir ? "Abrir ↗" : "Sin URL"}
-              </span>
-            </a>
-          ))}
-          {entregables.length === 0 && (
-            <p className="text-sm text-white/40">
-              Sin entregables sincronizados todavía. Se suben desde el vault
-              con <code className="text-white/60">sync-entregables.js</code>{" "}
-              después de generar los PDF o el sitio demo.
-            </p>
-          )}
         </div>
       </section>
 
