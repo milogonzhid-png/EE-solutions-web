@@ -16,7 +16,7 @@ export async function GET(request: Request) {
   }
 
   // Detrás del proxy de eesolutions.com.mx/app/*, request.url trae el host
-  // interno de Netlify (ee-solutions-app.netlify.app). x-forwarded-host
+  // interno del worker de Cloudflare, no el público. x-forwarded-host
   // conserva el dominio público real que vio el visitante — se usa ese
   // cuando está presente para no mandar al usuario al dominio interno.
   const hostPublico = request.headers.get("x-forwarded-host");

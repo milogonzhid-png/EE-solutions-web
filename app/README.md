@@ -2,13 +2,13 @@
 
 Dashboard interno de EE Solutions: un panel de administración para Emilio y Eduardo (proyectos/clientes, finanzas, pendientes) y un portal donde cada cliente ve solo su propio proyecto.
 
-Vive como subcarpeta dentro de este mismo repo (`EE-solutions-web`), junto al sitio estático (`index.html`, raíz del repo) y al vault de Obsidian (`obsidian/`) — todo el código de la agencia en un solo lugar. Aun así se **despliega como un sitio de Netlify aparte** (`ee-solutions-app`, distinto del sitio estático `eesolutions.com.mx`): son runtimes distintos — este es Next.js con build y backend, el sitio raíz es HTML estático sin build — y Netlify no puede servir los dos con una sola configuración. Lo que los une de cara al visitante es la regla de proxy en el `netlify.toml` de la raíz del repo (`/app/*` → este sitio), para que nunca se note que son dos deploys.
+Vive como subcarpeta dentro de este mismo repo (`EE-solutions-web`), junto al sitio estático (`index.html`, raíz del repo) y al vault de Obsidian (`obsidian/`) — todo el código de la agencia en un solo lugar. Aun así se **despliega aparte, en Cloudflare Workers**, mientras que el sitio estático sigue en Netlify: son runtimes distintos — este es Next.js con build y backend, el sitio raíz es HTML estático sin build. Están separados también por costo: cada build de Next.js consume créditos del plan gratuito de Netlify y el sitio estático casi no consume, así que teniéndolos en proveedores distintos ninguno se queda sin presupuesto. Lo que los une de cara al visitante es la regla de proxy en el `netlify.toml` de la raíz del repo (`/app/*` → este worker), para que nunca se note que son dos deploys.
 
 ## Stack
 
 - **Next.js 16** (App Router, TypeScript, Tailwind CSS 4).
 - **Supabase** — Postgres + Auth (magic link) + Row Level Security. Un solo rol admin ve todo; un rol cliente solo ve su propio registro (impuesto por RLS, no por lógica de la app).
-- **Netlify** — deploy, con `@netlify/plugin-nextjs`.
+- **Cloudflare Workers** — deploy, con `@opennextjs/cloudflare`.
 
 ## Desarrollo local
 
@@ -38,6 +38,13 @@ El esquema replica la estructura del vault de Obsidian (`obsidian/02-Clientes/<s
 
 ## Deploy
 
-Sitio de Netlify aparte (`ee-solutions-app`), con **base directory = `app`** dentro de este repo (se configura una vez al vincular el repo al sitio, en Netlify → Site settings → Build & deploy). Variables de entorno ya cargadas en ese sitio: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (ambas en `.env.example`).
+Worker de Cloudflare (`ee-solutions-app`), con **root directory = `app`** dentro de este repo.
 
-Se ve en **`eesolutions.com.mx/app`** — nunca en el dominio `.netlify.app` — gracias a la regla de proxy en el `netlify.toml` de la raíz del repo. `basePath: "/app"` en `next.config.ts` es lo que hace que todas las rutas de esta app (`/app/login`, `/app/dashboard`, etc.) coincidan con esa ruta.
+```bash
+npm run cf:build     # compila con el adaptador de OpenNext
+npm run cf:deploy    # compila y publica el worker
+```
+
+Variables de entorno que necesita el build: `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_ANON_KEY` (ver `.env.example`). El adaptador requiere las banderas `nodejs_compat` y `global_fetch_strictly_public`, ya declaradas en `wrangler.jsonc`.
+
+Se ve en **`eesolutions.com.mx/app`** — nunca en el dominio del worker — gracias a la regla de proxy en el `netlify.toml` de la raíz del repo. `basePath: "/app"` en `next.config.ts` es lo que hace que todas las rutas de esta app (`/app/login`, `/app/dashboard`, etc.) coincidan con esa ruta.

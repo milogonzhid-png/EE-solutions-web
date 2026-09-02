@@ -1,0 +1,15 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "ee-solutions-app",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-03-01",
+  // nodejs_compat lo requiere el adaptador de OpenNext; sin él el worker
+  // no arranca. global_fetch_strictly_public evita que las llamadas del
+  // servidor a Supabase se resuelvan dentro del propio worker.
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "observability": { "enabled": true }
+}

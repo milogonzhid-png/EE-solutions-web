@@ -17,7 +17,7 @@ const RUTAS_PUBLICAS = ["/login", "/auth"];
  *
  * IMPORTANTE: nunca redirigir a "/" (o sea, eesolutions.com.mx/app a secas).
  * El sitio principal proxea "/app/*", y "/app" pelado entra en un ciclo de
- * diagonal final entre Netlify y Next. Siempre se manda a /dashboard, /portal
+ * diagonal final entre el proxy y Next. Siempre se manda a /dashboard, /portal
  * o /login, que sí son rutas completas.
  */
 export async function updateSession(request: NextRequest) {
