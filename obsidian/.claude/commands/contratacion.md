@@ -29,4 +29,6 @@ Si `01-Diagnostico.md` está vacío, dilo también — sin diagnóstico la bienv
 
 Si `node export.js` falla con `Failed to launch the browser process`, ver `00-Registro-de-Agentes.md` §Herramientas locales — generación de PDF (Chromium quedó a medio descargar, se reinstala con `npx puppeteer browsers install chrome`).
 
+Corre `node ~/Documents/ee-solutions-secrets/scripts/supabase-sync/sync-clientes.js` parado en la raíz del vault, para que la fase/estado actualizados del cliente lleguen al dashboard. Si falla, dilo — no es razón para detener lo demás.
+
 Termina con qué datos faltan (precio, fechas, material del cliente) y quién consigue cada uno.

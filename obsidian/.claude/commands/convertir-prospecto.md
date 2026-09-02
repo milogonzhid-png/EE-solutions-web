@@ -37,5 +37,6 @@ Al terminar, `02-Clientes/$ARGUMENTS/` debe tener exactamente `06-Ficha-de-Pago.
 ## Cierre
 
 12. Registra en `00-Inbox/_estado.md` bajo "En curso": qué prospecto se convirtió, en qué fecha, y si los documentos de bienvenida quedaron completos o con pendientes.
+13. Corre `node ~/Documents/ee-solutions-secrets/scripts/supabase-sync/sync-clientes.js` parado en la raíz del vault, para que el cliente nuevo aparezca en el dashboard. Si falla, dilo — no es razón para detener lo demás.
 
 Termina listando en pantalla **solo** los datos que faltan (para Fase 2 y para completar los documentos de bienvenida) y quién los consigue.
