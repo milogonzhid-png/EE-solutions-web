@@ -69,6 +69,16 @@ export default function LoginPage() {
           <p className="mt-1 text-sm text-white/60">
             Acceso al panel — solo para cuentas invitadas.
           </p>
+          <a
+            // basePath ("/app") no se aplica a strings armados a mano — hay
+            // que agregarlo explícito, igual que con emailRedirectTo abajo.
+            href="/app/tutorial-acceso-panel.html"
+            target="_blank"
+            rel="noreferrer"
+            className="mt-2 inline-block text-xs text-[#21C7EA] hover:underline"
+          >
+            ¿Primera vez? Mira cómo entrar
+          </a>
         </div>
 
         {enviado ? (

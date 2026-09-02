@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { NOMBRES_FASE, NOMBRES_ESTADO, COLOR_ESTADO } from "@/lib/fases";
+import { NOMBRES_ESTADO, COLOR_ESTADO } from "@/lib/fases";
+import { LineaDeFases } from "@/components/LineaDeFases";
 
 export const revalidate = 0;
 
@@ -38,8 +39,8 @@ export default async function ClientesPage() {
                   </Link>
                 </td>
                 <td className="px-4 py-2.5 text-white/60">{c.giro ?? "—"}</td>
-                <td className="px-4 py-2.5 text-white/70">
-                  {NOMBRES_FASE[c.fase]}
+                <td className="px-4 py-2.5">
+                  <LineaDeFases faseActual={c.fase} variante="compacta" />
                 </td>
                 <td className="px-4 py-2.5">
                   <span

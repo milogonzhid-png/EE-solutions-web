@@ -7,6 +7,8 @@ export type Json =
   | Json[]
 
 export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "14.5"
   }
@@ -15,6 +17,7 @@ export type Database = {
       clientes: {
         Row: {
           actualizado_en: string
+          correo: string | null
           creado_en: string
           direccion: string | null
           dominio: string | null
@@ -33,6 +36,7 @@ export type Database = {
         }
         Insert: {
           actualizado_en?: string
+          correo?: string | null
           creado_en?: string
           direccion?: string | null
           dominio?: string | null
@@ -51,6 +55,7 @@ export type Database = {
         }
         Update: {
           actualizado_en?: string
+          correo?: string | null
           creado_en?: string
           direccion?: string | null
           dominio?: string | null
@@ -137,6 +142,47 @@ export type Database = {
         }
         Relationships: []
       }
+      entregables_cliente: {
+        Row: {
+          actualizado_en: string
+          cliente_id: string
+          creado_en: string
+          id: string
+          nombre: string
+          storage_path: string | null
+          tipo: Database["public"]["Enums"]["tipo_entregable"]
+          url_externa: string | null
+        }
+        Insert: {
+          actualizado_en?: string
+          cliente_id: string
+          creado_en?: string
+          id?: string
+          nombre: string
+          storage_path?: string | null
+          tipo: Database["public"]["Enums"]["tipo_entregable"]
+          url_externa?: string | null
+        }
+        Update: {
+          actualizado_en?: string
+          cliente_id?: string
+          creado_en?: string
+          id?: string
+          nombre?: string
+          storage_path?: string | null
+          tipo?: Database["public"]["Enums"]["tipo_entregable"]
+          url_externa?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "entregables_cliente_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       gastos: {
         Row: {
           categoria: string
@@ -171,6 +217,7 @@ export type Database = {
         Row: {
           cliente_id: string | null
           creado_en: string
+          depende_de: Database["public"]["Enums"]["responsable_pendiente"]
           descripcion: string
           fase: Database["public"]["Enums"]["fase_proyecto"] | null
           id: string
@@ -181,6 +228,7 @@ export type Database = {
         Insert: {
           cliente_id?: string | null
           creado_en?: string
+          depende_de?: Database["public"]["Enums"]["responsable_pendiente"]
           descripcion: string
           fase?: Database["public"]["Enums"]["fase_proyecto"] | null
           id?: string
@@ -191,6 +239,7 @@ export type Database = {
         Update: {
           cliente_id?: string | null
           creado_en?: string
+          depende_de?: Database["public"]["Enums"]["responsable_pendiente"]
           descripcion?: string
           fase?: Database["public"]["Enums"]["fase_proyecto"] | null
           id?: string
@@ -297,7 +346,14 @@ export type Database = {
       fase_proyecto: "1" | "2" | "3" | "4" | "5" | "6"
       paquete_servicio: "esencial" | "completo"
       perfil_cliente: "1" | "2" | "3"
+      responsable_pendiente: "nosotros" | "cliente"
       rol_usuario: "admin" | "cliente"
+      tipo_entregable:
+        | "ficha_pago"
+        | "bienvenida"
+        | "agreement"
+        | "demo_web"
+        | "otro"
     }
     CompositeTypes: {
       [_ in never]: never
