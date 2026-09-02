@@ -50,7 +50,7 @@ Si un entregable activa una de esas cinco, escribe al final: `> ⚠️ Pendiente
 4. **Cero relleno.** Nada de "en el mundo actual", "soluciones innovadoras", "líderes en el mercado". Cada frase aporta información o se borra.
 5. **Español mexicano, claro y comercial.** Sin anglicismos forzados, sin tecnicismos innecesarios, sin tono corporativo frío.
 6. **`.raw/` es intocable.** Lo que manda el cliente (audios, fotos, PDFs, capturas, textos de WhatsApp) se guarda tal cual en `02-Clientes/<cliente>/.raw/` y nunca se edita ni se borra. Tu síntesis va en un archivo hermano.
-7. **Nada de credenciales en el vault.** Ni contraseñas, ni API keys, ni tokens de Netlify/Hostinger/HubSpot/Groq. Si encuentras una, avisa y no la copies a otra nota.
+7. **Nada de credenciales en el vault.** Ni contraseñas, ni API keys, ni tokens de Cloudflare/Netlify/Hostinger/HubSpot/Groq. Si encuentras una, avisa y no la copies a otra nota.
 8. **Concreto sobre vago.** Prefiere ejemplos y números sobre afirmaciones generales — es el tono de la marca, no una preferencia de estilo.
 
 ---
@@ -88,6 +88,7 @@ Cada cliente vive en `02-Clientes/<slug-kebab-case>/` con exactamente estos arch
 05-Entrega.md        Fase 6 — dominio, DNS, capacitación, accesos entregados (sin credenciales).
 06-Soporte.md        Post-venta — log de solicitudes de cambio, renovaciones, estado de mantenimiento.
 .raw/                Material original del cliente. Intocable.
+Entregables/          Los 3 PDF de bienvenida + el tutorial de acceso al panel + el sitio demo. Solo archivos locales — ver §4.1.
 ```
 
 `00-Ficha.md` lleva el frontmatter que hace funcionar las búsquedas del vault:
@@ -104,11 +105,16 @@ estado: activo | pausado | entregado | archivado
 mantenimiento: sí | no
 inicio: AAAA-MM-DD
 dominio: 
+correo:                     # contacto del cliente — fuente para invitarlo al portal, ver §14
 tags: [cliente]
 ---
 ```
 
 ---
+
+## 4.1 Entregables del cliente — solo local, no se sincronizan a ningún lado
+
+Los 3 PDF de bienvenida (`06-Ficha-de-Pago.pdf`, `07-Bienvenida.pdf`, `08-Agreement.pdf`), el tutorial de acceso al panel (`tutorial-acceso-panel.html`, copiado tal cual desde `07-Recursos/` — ver §14) y el sitio demo (`sitio-demo.html`) de cada cliente viven en `02-Clientes/<slug>/Entregables/` — una carpeta nueva dentro del cliente, creada la primera vez que `/contratacion` o `/convertir-prospecto` generan esos archivos. **Es almacenamiento local (Finder/iCloud), no un dashboard ni Supabase Storage** — no existe ningún paso de sincronización para esto, a propósito: se decidió el 2026-09-02 quitar la sincronización automática al dashboard que existía antes (ver Anexo). Para compartir un PDF, el tutorial o el sitio demo con el cliente, se manda el archivo directamente (WhatsApp/correo) o se copia a donde el equipo decida en el momento — no hay una regla fija de entrega, es criterio de quien cierra el trato.
 
 ## 5. Convenciones de escritura en el vault
 
@@ -147,7 +153,7 @@ Reglas del entregable:
 - **SEO local siempre que el negocio sea local:** title y meta description con ciudad, H1 con servicio + ubicación, schema `LocalBusiness`, NAP consistente, enlace a Google Business Profile.
 - **CTA en cada sección**, con jerarquía: WhatsApp con mensaje pre-llenado > llamada > formulario > reserva. El botón de WhatsApp lleva `wa.me/<número>?text=<mensaje precargado>`.
 - **Confianza obligatoria:** evidencia de trabajo, ubicación visible, horario, reseñas reales (nunca inventadas), aviso de privacidad.
-- **Código:** HTML semántico, CSS con variables, mobile-first, sin frameworks pesados salvo que se pida. Un solo archivo cuando sea posible, listo para GitHub → Netlify.
+- **Código:** HTML semántico, CSS con variables, mobile-first, sin frameworks pesados salvo que se pida. Un solo archivo cuando sea posible, listo para GitHub → Cloudflare Pages.
 - **Paleta de marca de EE Solutions** (solo para materiales de la agencia, no para clientes): Ink `#07050A`, Cyan `#21C7EA`, Violet `#8C55D2`, Magenta `#FF2F86`. Cada cliente lleva su propia paleta.
 - **Punto 9 nunca va vacío.** Si crees que no falta nada, revisa: fotos, horarios, precios, reseñas, redes, número de WhatsApp, dirección exacta, años operando.
 
@@ -255,10 +261,22 @@ El handoff final (Fase 6 → Soporte) es el que activa el cobro recurrente y la 
 | Subagente | Se activa cuando | Trabajo |
 |---|---|---|
 | **Frontend / UI** | maquetación de sitios de cliente en paralelo | HTML/CSS/JS, responsividad, paleta por cliente |
-| **Integraciones** | Typebot + SEO técnico + DNS se vuelven cuello de botella | Typebot, schema, Google Search Console, Netlify/Hostinger/DNS |
-| **QA / Revisión** | hay más de un deploy por semana | revisa código y checklist de confianza antes de publicar; nada sale a Netlify sin su visto |
+| **Integraciones** | Typebot + SEO técnico + DNS se vuelven cuello de botella | Typebot, schema, Google Search Console, Cloudflare/Hostinger/DNS |
+| **QA / Revisión** | hay más de un deploy por semana | revisa código y checklist de confianza antes de publicar; nada sale a producción sin su visto |
 
 Los demás departamentos operan como agente único hasta que el volumen pida lo contrario. Cuando eso ocurra, se documenta el nuevo subagente en esta sección con su criterio de activación, nunca antes.
+
+---
+
+## 14. Protocolo: credencial de acceso al portal y tutorial
+
+**Los entregables del cliente (PDF + sitio demo) NO se sincronizan al dashboard.** Se probó esa sincronización el 2026-09-02 y se retiró el mismo día por decisión del usuario — quedan solo como archivos locales en `02-Clientes/<slug>/Entregables/` (ver §4.1). No hay tabla ni bucket de Supabase para esto, ni script de sincronización — si en algún momento se vuelve a pedir, no reactives nada a medias, empieza por leer el Anexo de esta versión.
+
+**Credencial de acceso al portal.** Cuando un prospecto se convierte en cliente (`/convertir-prospecto`, Parte 3), se prepara — no se envía sola — la invitación de acceso con `provisionar-credencial.js $slug`. Por default corre en dry-run (solo muestra qué correo se invitaría); mandar la invitación real requiere `--confirmar` **después** de que Emilio o Eduardo den el visto bueno, porque "exponer datos personales o credenciales" es una de las cinco decisiones reservadas al consejo (§1, `_ESTATUTO.md`). Ningún flujo automático la manda sola. El correo de origen es `correo:` en `00-Ficha.md` — si no está, no se inventa, se marca `⟨PENDIENTE⟩` y se avisa.
+
+**Tutorial de acceso al panel.** Vive publicado en `eesolutions.com.mx/app/tutorial-acceso-panel.html` (fuente en `07-Recursos/tutorial-acceso-panel.html`, servido como asset estático del dashboard en `app/public/`) y está enlazado desde `/login` ("¿Primera vez? Mira cómo entrar"). Es genérico — el proceso de entrar (correo → enlace o código de 6 dígitos → portal) es idéntico para todo cliente, así que no se regenera por cliente. Solo se actualiza si cambia el flujo de login mismo (por ejemplo, si se deja de usar el código de 6 dígitos como respaldo); en ese caso, edita el archivo en `07-Recursos/` y cópialo tanto a `app/public/` (antes del siguiente deploy del dashboard) como a cada `Entregables/tutorial-acceso-panel.html` ya entregado que quede desactualizado.
+
+Desde 2026-09-02, además de vivir en el dashboard, este mismo archivo (tal cual, sin editar ni convertir a PDF) se copia a `02-Clientes/<slug>/Entregables/tutorial-acceso-panel.html` de cada cliente — lo hacen `/contratacion` y `/convertir-prospecto` como parte de los entregables de bienvenida (ver §4, §4.1). Así el cliente lo recibe junto con sus PDF, no solo como un enlace dentro del login, y sabe desde el día uno cómo entrar a ver los avances de su proyecto en tiempo real.
 
 ---
 
@@ -282,3 +300,7 @@ Cambios de v1 (6 agentes) a v2 (8 agentes), **aprobados por los fundadores** el 
 - **`datos`:** se extiende su mandato de reportes mensuales a también recopilar y consolidar el reporte semanal de los domingos junto con el programa de contenido de `marketing`, antes de que `gerencia` lo autorice. → Aprobado.
 
 Decisiones registradas. Este archivo es la versión vigente (v3), sucesora de v1 y v2.
+
+### Cambio puntual del 2026-09-02 (no sube de versión): entregables del cliente vuelven a ser solo locales
+
+Ese mismo día se había construido una sincronización de los entregables del cliente (PDF + sitio demo) a Supabase Storage con apartado propio en el dashboard y el portal. El usuario pidió quitarla horas después: los 3 PDF y el sitio demo se guardan **solo en Finder**, en `02-Clientes/<slug>/Entregables/` (carpeta nueva, ver §4.1) — sin tabla `entregables_cliente`, sin bucket, sin script de sincronización, sin sección en el dashboard/portal. Se revirtió el código del dashboard (`app/`) y se borró el schema de Supabase correspondiente. Lo que **no** se tocó, porque no se pidió: la credencial de acceso al portal (`correo:` en la ficha + `provisionar-credencial.js`) y el tutorial de acceso publicado en `/login` — ambos siguen como en §14.

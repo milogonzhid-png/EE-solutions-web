@@ -20,7 +20,7 @@ El cliente participa activamente en tres: diagnóstico, aprobación de propuesta
 
 **Fase 1** — conversación inicial por WhatsApp o videollamada; investigación breve de la competencia.
 **Fase 5** — asistente conversacional, SEO, botones de contacto, ficha de Google Business y aviso de privacidad.
-**Fase 6** — configuración de dominio, DNS y HTTPS; sesión de capacitación al cliente.
+**Fase 6** — configuración de dominio, DNS y HTTPS; sesión de capacitación al cliente. El dominio del cliente se apunta a Cloudflare cambiando sus **nameservers** en el registrador; antes de cambiarlos se copian a Cloudflare todos sus registros actuales, en especial los de correo (MX, SPF, DKIM, DMARC) — si falta uno, el negocio deja de recibir correo.
 
 **Duración total estimada:** 11 a 17 días.
 

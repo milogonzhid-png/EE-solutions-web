@@ -40,7 +40,7 @@ Tipografía:
 
 ## Despliegue
 - Repo GitHub: 
-- Sitio Netlify: 
+- Proyecto de Cloudflare Pages: 
 - Dominio (Hostinger): 
 - HTTPS: 
 
