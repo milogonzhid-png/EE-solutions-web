@@ -1,6 +1,8 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "ee-solutions-app",
+  // Cloudflare nombro el worker con el nombre del repo al importarlo; se
+  // respeta ese nombre para no crear un worker duplicado en cada deploy.
+  "name": "ee-solutions-web",
   "main": ".open-next/worker.js",
   "compatibility_date": "2026-03-01",
   // nodejs_compat lo requiere el adaptador de OpenNext; sin él el worker

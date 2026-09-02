@@ -10,17 +10,15 @@
 # ir ANTES de la regla con splat.
 [[redirects]]
   from = "/app"
-  to = "https://ee-solutions-app.netlify.app/app"
+  to = "https://ee-solutions-web.milo-gonzhid.workers.dev/app"
   status = 200
   force = true
 
-# Dashboard (proyecto Next.js aparte, repo EE-solutions-app, deploy propio en
-# Netlify) servido bajo el mismo dominio — proxy, no redirect: el visitante
-# nunca ve ee-solutions-app.netlify.app, la URL en el navegador se queda en
-# eesolutions.com.mx/app/... . status 200 + force=true es lo que lo hace
-# proxy en vez de redirect en Netlify.
+# Dashboard (Next.js, worker de Cloudflare). Respaldo: hoy quien atiende
+# /app/* es una ruta de Cloudflare, que intercepta antes de llegar aqui. Estas
+# reglas quedan por si el dominio volviera a resolver por Netlify.
 [[redirects]]
   from = "/app/*"
-  to = "https://ee-solutions-app.netlify.app/app/:splat"
+  to = "https://ee-solutions-web.milo-gonzhid.workers.dev/app/:splat"
   status = 200
   force = true
