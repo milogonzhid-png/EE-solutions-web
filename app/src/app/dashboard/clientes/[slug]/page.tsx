@@ -34,7 +34,7 @@ export default async function DetalleClientePage({
       .select("*")
       .eq("cliente_id", cliente.id)
       .order("fecha_emision", { ascending: false }),
-    entregablesConUrl(supabase, cliente.id),
+    entregablesConUrl(supabase, cliente.id, cliente.slug),
   ]);
 
   return (

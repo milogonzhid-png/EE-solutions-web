@@ -24,13 +24,25 @@ export type EntregableConUrl = Tables<"entregables_cliente"> & {
 };
 
 /**
- * Trae los entregables de un cliente con su URL para abrir: firmada (10 min)
- * si el archivo vive en Storage, o la url_externa tal cual si es un link
- * (p. ej. un sitio demo ya publicado en Netlify).
+ * Trae los entregables de un cliente con su URL para abrir.
+ *
+ * - PDF en Storage: URL firmada (10 min) — Supabase la sirve con
+ *   `Content-Type: application/pdf` real, se abre bien directo.
+ * - Sitio demo en Storage (`tipo: demo_web` + `storage_path`): NO usa URL
+ *   firmada. Supabase Storage fuerza `Content-Type: text/plain` +
+ *   `Content-Security-Policy: sandbox` en cualquier objeto que sirve — anti-XSS
+ *   deliberado, aplica igual a URLs firmadas que a públicas — así que un
+ *   `.html` servido directo desde Storage se ve como código fuente, nunca se
+ *   renderiza. Se enruta en cambio por `/demo/<slug>`, que lo descarga del
+ *   lado del servidor y lo re-sirve con el header correcto (ver
+ *   `src/app/demo/[slug]/route.ts`).
+ * - Link externo (`url_externa`, p. ej. un sitio demo ya publicado en
+ *   Netlify): se usa tal cual.
  */
 export async function entregablesConUrl(
   supabase: SupabaseClient<Database>,
   clienteId: string,
+  slug: string,
 ): Promise<EntregableConUrl[]> {
   const { data } = await supabase
     .from("entregables_cliente")
@@ -47,6 +59,10 @@ export async function entregablesConUrl(
       }
       if (!entregable.storage_path) {
         return { ...entregable, urlAbrir: null };
+      }
+      if (entregable.tipo === "demo_web") {
+        // basePath ("/app") no se aplica a strings armados a mano.
+        return { ...entregable, urlAbrir: `/app/demo/${slug}` };
       }
       const { data: firmada } = await supabase.storage
         .from(BUCKET_ENTREGABLES)

@@ -55,7 +55,7 @@ export default async function PortalPage() {
     );
   }
 
-  const entregables = await entregablesConUrl(supabase, cliente.id);
+  const entregables = await entregablesConUrl(supabase, cliente.id, cliente.slug);
 
   const abiertos = (pendientes ?? []).filter((p) => !p.resuelto);
   const deTuParte = abiertos.filter((p) => p.depende_de === "cliente");
