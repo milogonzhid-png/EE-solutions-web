@@ -14,8 +14,9 @@ Sitio en producción: **[eesolutions.com.mx](https://eesolutions.com.mx)**
 | `netlify.toml` | Configuración de Netlify (redirect 301 del dominio temporal de Netlify al dominio propio). |
 | `foto-edu.jpeg`, `foto-emilio.jpeg` | Fotografías de los fundadores usadas en la sección de equipo. |
 | `obsidian/` | Vault interno (Obsidian) con la documentación operativa de la empresa: contexto empresarial, stack tecnológico, plantillas de propuesta/contrato, proceso comercial, prospectos y clientes. **No es parte del sitio publicado.** |
+| `app/` | Dashboard interno + portal de clientes (Next.js + Supabase). Se despliega como un sitio de Netlify aparte y se sirve en `eesolutions.com.mx/app` vía proxy — ver `app/README.md`. **Tampoco es parte del sitio estático**, aunque comparta repo y dominio. |
 
-Es un sitio 100% estático: HTML, CSS y JavaScript en un solo archivo (`index.html`), sin build step ni dependencias de npm.
+El sitio de marketing (todo lo de la tabla salvo `obsidian/` y `app/`) es 100% estático: HTML, CSS y JavaScript en un solo archivo (`index.html`), sin build step ni dependencias de npm.
 
 ## Stack técnico
 
@@ -48,13 +49,9 @@ El flujo estándar es:
 
 > **Nota:** actualmente hay una discrepancia entre el dominio canónico declarado en `index.html` (`ee-solutions.mx`) y el dominio real de producción (`eesolutions.com.mx`) usado en `sitemap.xml`, `netlify.toml` y el contacto de la empresa — pendiente de unificar.
 
-## Roadmap: app con dashboards
+## Dashboard y portal de clientes
 
-Este repositorio contiene únicamente el sitio de marketing (landing page). Si el plan es construir una **app más personalizada con dashboards profesionales** (por ejemplo, panel de clientes, seguimiento de leads, reportes), lo recomendable es:
-
-- Decidir si vivirá en este mismo repo (como subcarpeta o subdominio, p. ej. `app.eesolutions.com.mx`) o en un repositorio aparte, dado que el sitio actual es estático y sin framework.
-- Elegir stack (React/Next.js, Vite, etc.) y una fuente de datos (HubSpot, Google Sheets, o una base de datos propia) ya que hoy no existe backend ni base de datos en este proyecto.
-- Definir autenticación si el dashboard será privado para clientes o uso interno del equipo.
+Vive en `app/` (Next.js + Supabase, con Row Level Security separando lo que ve un admin de lo que ve un cliente) — detalles en `app/README.md`. Se sirve en `eesolutions.com.mx/app` mediante la regla de proxy de este `netlify.toml`, aunque es un sitio de Netlify distinto del sitio estático (base directory `app` dentro de este mismo repo). Pendiente: sincronización automática vault de Obsidian → Supabase.
 
 ## Contacto
 

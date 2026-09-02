@@ -3,3 +3,14 @@
   to = "https://eesolutions.com.mx/:splat"
   status = 301
   force = true
+
+# Dashboard (proyecto Next.js aparte, repo EE-solutions-app, deploy propio en
+# Netlify) servido bajo el mismo dominio — proxy, no redirect: el visitante
+# nunca ve ee-solutions-app.netlify.app, la URL en el navegador se queda en
+# eesolutions.com.mx/app/... . status 200 + force=true es lo que lo hace
+# proxy en vez de redirect en Netlify.
+[[redirects]]
+  from = "/app/*"
+  to = "https://ee-solutions-app.netlify.app/app/:splat"
+  status = 200
+  force = true
