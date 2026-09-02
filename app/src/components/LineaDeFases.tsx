@@ -13,6 +13,9 @@ import {
  * - `detallada`: recorrido completo con entregable y duración; se usa en el
  *   portal del cliente y en la ficha de cada proyecto.
  *
+ * Los indicadores usan la progresión de color blanco → cyan → violeta →
+ * magenta de la sección "Proceso" del sitio público.
+ *
  * `mostrarInterno` decide si se muestran los equipos involucrados: el cliente
  * no tiene por qué ver los nombres internos de los departamentos.
  */
@@ -36,28 +39,20 @@ export function LineaDeFases({
 
   return (
     <div className="space-y-1">
-      {FASES.map((fase, i) => {
-        const completada = i < indiceActual;
-        const actual = i === indiceActual;
-        return (
-          <PasoDetallado
-            key={fase.clave}
-            numero={i + 1}
-            nombre={fase.nombre}
-            objetivo={fase.objetivo}
-            entregable={fase.entregable}
-            involucra={fase.involucra}
-            duracion={fase.duracion}
-            participaCliente={fase.participaCliente}
-            completada={completada}
-            actual={actual}
-            ultima={i === FASES.length - 1}
-            mostrarInterno={mostrarInterno}
-          />
-        );
-      })}
-      <p className="pt-3 text-xs text-white/35">
-        Duración estimada del proceso completo: {DURACION_TOTAL}.
+      {FASES.map((fase, i) => (
+        <PasoDetallado
+          key={fase.clave}
+          numero={i + 1}
+          fase={fase}
+          completada={i < indiceActual}
+          actual={i === indiceActual}
+          ultima={i === FASES.length - 1}
+          mostrarInterno={mostrarInterno}
+          retraso={i * 60}
+        />
+      ))}
+      <p className="mono-label pt-3 text-[0.6rem]">
+        Proceso completo · {DURACION_TOTAL}
       </p>
     </div>
   );
@@ -66,22 +61,27 @@ export function LineaDeFases({
 function LineaCompacta({ indiceActual }: { indiceActual: number }) {
   const fase = indiceActual >= 0 ? FASES[indiceActual] : null;
   return (
-    <div className="flex items-center gap-2">
-      <div className="flex gap-0.5" aria-hidden>
-        {ORDEN_FASES.map((clave, i) => (
-          <span
-            key={clave}
-            className={`h-1.5 w-4 rounded-full ${
-              i < indiceActual
-                ? "bg-[#21C7EA]/70"
-                : i === indiceActual
-                  ? "bg-[#21C7EA]"
-                  : "bg-white/12"
-            }`}
-          />
-        ))}
+    <div className="flex items-center gap-2.5">
+      <div className="flex gap-1" aria-hidden>
+        {ORDEN_FASES.map((clave, i) => {
+          const alcanzada = i <= indiceActual;
+          return (
+            <span
+              key={clave}
+              className={`h-1.5 w-4 rounded-full transition-all ${
+                i === indiceActual ? "w-6" : ""
+              }`}
+              style={{
+                background: alcanzada
+                  ? FASES[i].degradado
+                  : "rgba(255,255,255,.10)",
+                opacity: alcanzada && i < indiceActual ? 0.55 : 1,
+              }}
+            />
+          );
+        })}
       </div>
-      <span className="text-xs text-white/60">
+      <span className="text-xs text-muted">
         {fase ? `${indiceActual + 1}. ${fase.nombre}` : "—"}
       </span>
     </div>
@@ -90,89 +90,94 @@ function LineaCompacta({ indiceActual }: { indiceActual: number }) {
 
 function PasoDetallado({
   numero,
-  nombre,
-  objetivo,
-  entregable,
-  involucra,
-  duracion,
-  participaCliente,
+  fase,
   completada,
   actual,
   ultima,
   mostrarInterno,
+  retraso,
 }: {
   numero: number;
-  nombre: string;
-  objetivo: string;
-  entregable: string;
-  involucra: string;
-  duracion: string;
-  participaCliente: boolean;
+  fase: (typeof FASES)[number];
   completada: boolean;
   actual: boolean;
   ultima: boolean;
   mostrarInterno: boolean;
+  retraso: number;
 }) {
+  const encendido = completada || actual;
+
   return (
-    <div className="flex gap-4">
-      {/* Columna del indicador: círculo + línea vertical que une los pasos. */}
+    <div
+      className="aparecer flex gap-4"
+      style={{ "--retraso": `${retraso}ms` } as React.CSSProperties}
+    >
+      {/* Columna del indicador: círculo + línea que une los pasos. */}
       <div className="flex flex-col items-center">
         <div
-          className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-medium ${
-            completada
-              ? "bg-[#21C7EA] text-[#07050A]"
-              : actual
-                ? "border-2 border-[#21C7EA] text-[#21C7EA]"
-                : "border border-white/20 text-white/30"
-          }`}
+          className={`grid h-9 w-9 shrink-0 place-items-center rounded-xl font-display text-xs font-extrabold transition-transform ${
+            actual ? "latido scale-105" : ""
+          } ${encendido ? "" : "border border-white/15 text-white/25"}`}
+          style={
+            encendido
+              ? {
+                  background: fase.degradado,
+                  color: fase.textoOscuro ? "#0B0710" : "#fff",
+                  opacity: completada && !actual ? 0.75 : 1,
+                }
+              : undefined
+          }
         >
           {completada ? "✓" : numero}
         </div>
         {!ultima && (
           <div
-            className={`w-px flex-1 ${completada ? "bg-[#21C7EA]/40" : "bg-white/10"}`}
+            className="w-px flex-1"
+            style={{
+              background: completada
+                ? "linear-gradient(180deg,rgba(33,199,234,.5),rgba(140,85,210,.25))"
+                : "rgba(255,255,255,.08)",
+            }}
           />
         )}
       </div>
 
-      <div className={`flex-1 pb-6 ${ultima ? "pb-0" : ""}`}>
+      <div className={`flex-1 ${ultima ? "pb-0" : "pb-6"}`}>
         <div className="flex flex-wrap items-center gap-2">
           <span
-            className={
+            className={`font-display text-[0.95rem] font-semibold ${
               actual
-                ? "font-medium text-white"
+                ? "text-white"
                 : completada
-                  ? "text-white/70"
-                  : "text-white/35"
-            }
+                  ? "text-texto"
+                  : "text-white/30"
+            }`}
           >
-            {nombre}
+            {fase.nombre}
           </span>
           {actual && (
-            <span className="rounded-full bg-[#21C7EA]/15 px-2 py-0.5 text-xs text-[#21C7EA]">
+            <span className="rounded-full border border-cyan/40 bg-cyan/10 px-2 py-0.5 font-mono text-[0.6rem] uppercase tracking-widest text-cyan">
               En curso
             </span>
           )}
-          {participaCliente && !completada && (
-            <span className="rounded-full bg-[#8C55D2]/15 px-2 py-0.5 text-xs text-[#8C55D2]">
-              Participas aquí
+          {fase.participaCliente && !completada && (
+            <span className="rounded-full border border-violet/40 bg-violet/10 px-2 py-0.5 font-mono text-[0.6rem] uppercase tracking-widest text-violet">
+              Participas
             </span>
           )}
         </div>
 
-        {(actual || completada) && (
+        {encendido && (
           <p
-            className={`mt-1 text-sm ${actual ? "text-white/60" : "text-white/40"}`}
+            className={`mt-1 text-sm ${actual ? "text-texto" : "text-muted"}`}
           >
-            {objetivo}
+            {fase.objetivo}
           </p>
         )}
 
-        <p
-          className={`mt-1 text-xs ${actual ? "text-white/50" : "text-white/30"}`}
-        >
-          Entregable: {entregable} · {duracion}
-          {mostrarInterno ? ` · ${involucra}` : ""}
+        <p className="mono-label mt-1.5 text-[0.6rem] normal-case tracking-[0.08em]">
+          {fase.entregable} · {fase.duracion}
+          {mostrarInterno ? ` · ${fase.involucra}` : ""}
         </p>
       </div>
     </div>
@@ -194,25 +199,38 @@ export function EmbudoDeFases({
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
       {FASES.map((fase, i) => {
         const cantidad = conteoPorFase[fase.clave] ?? 0;
+        const activa = cantidad > 0;
         return (
           <div
             key={fase.clave}
-            className={`rounded-xl border p-4 ${
-              cantidad > 0
-                ? "border-[#21C7EA]/30 bg-[#21C7EA]/[0.06]"
-                : "border-white/10 bg-white/[0.02]"
-            }`}
+            className="tarjeta aparecer relative overflow-hidden p-4"
+            style={{ "--retraso": `${i * 50}ms` } as React.CSSProperties}
           >
-            <p className="text-xs text-white/40">Fase {i + 1}</p>
+            {/* Filo de color que identifica la fase, aun cuando esté vacía. */}
+            <span
+              className="absolute inset-x-0 top-0 h-0.5"
+              style={{ background: fase.degradado, opacity: activa ? 1 : 0.25 }}
+            />
+            <p className="mono-label text-[0.58rem]">Fase {i + 1}</p>
             <p
-              className={`mt-1 text-sm ${cantidad > 0 ? "text-white/80" : "text-white/40"}`}
+              className={`mt-1 font-display text-[0.82rem] font-semibold leading-tight ${
+                activa ? "text-white" : "text-white/35"
+              }`}
             >
               {fase.nombre}
             </p>
             <p
-              className={`mt-2 text-2xl font-semibold tracking-tight ${
-                cantidad > 0 ? "text-[#21C7EA]" : "text-white/20"
-              }`}
+              className="mt-3 font-display text-2xl font-extrabold tracking-tight"
+              style={
+                activa
+                  ? {
+                      background: fase.degradado,
+                      WebkitBackgroundClip: "text",
+                      backgroundClip: "text",
+                      color: "transparent",
+                    }
+                  : { color: "rgba(255,255,255,.16)" }
+              }
             >
               {cantidad}
             </p>
@@ -220,7 +238,7 @@ export function EmbudoDeFases({
         );
       })}
       {total === 0 && (
-        <p className="col-span-full text-xs text-white/35">
+        <p className="col-span-full text-xs text-muted">
           El embudo se llena solo conforme des de alta clientes y avancen de fase.
         </p>
       )}

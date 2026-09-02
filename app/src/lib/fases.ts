@@ -23,6 +23,14 @@ export type Fase = {
    * la propuesta y validación de la versión de prueba (fases 1, 2 y 4).
    */
   participaCliente: boolean;
+  /**
+   * Degradado del indicador. Es la misma progresión blanco → cyan → violeta →
+   * magenta que usa la sección "Proceso" de eesolutions.com.mx, para que el
+   * panel y la web se lean como lo mismo.
+   */
+  degradado: string;
+  /** Si el número va en tinta oscura (degradados claros) o en blanco. */
+  textoOscuro: boolean;
 };
 
 export const FASES: Fase[] = [
@@ -34,6 +42,8 @@ export const FASES: Fase[] = [
     involucra: "Emilio + ventas + marketing",
     duracion: "1-2 días",
     participaCliente: true,
+    degradado: "linear-gradient(135deg,#FFFFFF,#EAF7FC)",
+    textoOscuro: true,
   },
   {
     clave: "2",
@@ -43,6 +53,8 @@ export const FASES: Fase[] = [
     involucra: "Emilio + ventas + finanzas",
     duracion: "1 día",
     participaCliente: true,
+    degradado: "linear-gradient(135deg,#FFFFFF,#21C7EA)",
+    textoOscuro: true,
   },
   {
     clave: "3",
@@ -52,6 +64,8 @@ export const FASES: Fase[] = [
     involucra: "marketing (copy) + Emilio (validador)",
     duracion: "2-3 días",
     participaCliente: false,
+    degradado: "linear-gradient(135deg,#21C7EA,#6FA5DE)",
+    textoOscuro: true,
   },
   {
     clave: "4",
@@ -61,6 +75,8 @@ export const FASES: Fase[] = [
     involucra: "diseño + ingeniería + Eduardo",
     duracion: "4-6 días",
     participaCliente: true,
+    degradado: "linear-gradient(135deg,#6FA5DE,#8C55D2)",
+    textoOscuro: false,
   },
   {
     clave: "5",
@@ -70,6 +86,8 @@ export const FASES: Fase[] = [
     involucra: "producto-ia + ingeniería + legal + Eduardo",
     duracion: "2-3 días",
     participaCliente: false,
+    degradado: "linear-gradient(135deg,#8C55D2,#FF2F86)",
+    textoOscuro: false,
   },
   {
     clave: "6",
@@ -79,6 +97,8 @@ export const FASES: Fase[] = [
     involucra: "Eduardo + ingeniería",
     duracion: "1-2 días",
     participaCliente: true,
+    degradado: "linear-gradient(135deg,#FF2F86,#FF6FA8)",
+    textoOscuro: false,
   },
 ];
 

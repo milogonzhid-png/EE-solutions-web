@@ -14,45 +14,45 @@ export default async function ClientesPage() {
 
   return (
     <div>
-      <h1 className="mb-6 text-lg font-semibold">Clientes y proyectos</h1>
-      <div className="overflow-hidden rounded-xl border border-white/10">
+      <h2 className="eyebrow mb-5">Clientes y proyectos</h2>
+      <div className="tarjeta overflow-hidden hover:translate-y-0 hover:shadow-none">
         <table className="w-full text-sm">
-          <thead className="bg-white/[0.03] text-left text-xs text-white/50">
+          <thead className="border-b border-linea bg-white/[0.02] text-left">
             <tr>
-              <th className="px-4 py-2.5 font-medium">Cliente</th>
-              <th className="px-4 py-2.5 font-medium">Giro</th>
-              <th className="px-4 py-2.5 font-medium">Fase</th>
-              <th className="px-4 py-2.5 font-medium">Estado</th>
-              <th className="px-4 py-2.5 font-medium">Paquete</th>
-              <th className="px-4 py-2.5 font-medium">Mantenimiento</th>
+              <th className="mono-label px-5 py-3 font-normal">Cliente</th>
+              <th className="mono-label px-5 py-3 font-normal">Giro</th>
+              <th className="mono-label px-5 py-3 font-normal">Fase</th>
+              <th className="mono-label px-5 py-3 font-normal">Estado</th>
+              <th className="mono-label px-5 py-3 font-normal">Paquete</th>
+              <th className="mono-label px-5 py-3 font-normal">Mantenimiento</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-white/5">
             {(clientes ?? []).map((c) => (
-              <tr key={c.id}>
-                <td className="px-4 py-2.5">
+              <tr key={c.id} className="transition-colors hover:bg-white/[0.03]">
+                <td className="px-5 py-3.5">
                   <Link
                     href={`/dashboard/clientes/${c.slug}`}
-                    className="font-medium hover:text-[#21C7EA]"
+                    className="font-medium text-white transition-colors hover:text-cyan"
                   >
                     {c.nombre_comercial}
                   </Link>
                 </td>
-                <td className="px-4 py-2.5 text-white/60">{c.giro ?? "—"}</td>
-                <td className="px-4 py-2.5">
+                <td className="px-5 py-3.5 text-muted">{c.giro ?? "—"}</td>
+                <td className="px-5 py-3.5">
                   <LineaDeFases faseActual={c.fase} variante="compacta" />
                 </td>
-                <td className="px-4 py-2.5">
+                <td className="px-5 py-3.5">
                   <span
                     className={`rounded-full px-2 py-0.5 text-xs ${COLOR_ESTADO[c.estado]}`}
                   >
                     {NOMBRES_ESTADO[c.estado]}
                   </span>
                 </td>
-                <td className="px-4 py-2.5 text-white/70 capitalize">
+                <td className="px-5 py-3.5 text-white/70 capitalize">
                   {c.paquete ?? "⟨pendiente⟩"}
                 </td>
-                <td className="px-4 py-2.5 text-white/70">
+                <td className="px-5 py-3.5 text-white/70">
                   {c.mantenimiento ? "Sí" : "No"}
                 </td>
               </tr>

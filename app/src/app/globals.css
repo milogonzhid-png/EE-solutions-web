@@ -1,26 +1,218 @@
 @import "tailwindcss";
 
+/**
+ * Sistema visual de EE Solutions.
+ * Los tokens son los mismos de eesolutions.com.mx (ver index.html del sitio y
+ * `obsidian/01-Empresa/06-Identidad-de-Marca.md`) para que el panel y la web
+ * se sientan el mismo producto.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --ink: #07050a;
+  --surface: #100c17;
+  --surface-2: #171122;
+  --line: rgba(255, 255, 255, 0.1);
+  --texto: #cfc9d8;
+  --muted: #8e88a0;
+  --cyan: #21c7ea;
+  --violet: #8c55d2;
+  --magenta: #ff2f86;
+  --rail: linear-gradient(
+    90deg,
+    #ffffff 0%,
+    #21c7ea 34%,
+    #8c55d2 64%,
+    #ff2f86 100%
+  );
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-ink: var(--ink);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-linea: var(--line);
+  --color-texto: var(--texto);
+  --color-muted: var(--muted);
+  --color-cyan: var(--cyan);
+  --color-violet: var(--violet);
+  --color-magenta: var(--magenta);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-display: "Unbounded", system-ui, sans-serif;
+  --font-body: "Instrument Sans", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--ink);
+  color: var(--texto);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  color: #fff;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+/* ---------- Utilidades de marca ---------- */
+
+/** Barra degradada de la marca. */
+.rail {
+  background: var(--rail);
+}
+
+/** Texto con el degradado de marca. */
+.grad-text {
+  background: var(--rail);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/**
+ * Etiqueta pequeña en mono con guion degradado, igual que en la web.
+ * Se usa para rotular secciones y KPIs.
+ */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.eyebrow::before {
+  content: "";
+  width: 20px;
+  height: 2px;
+  background: var(--rail);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/** Etiqueta mono sin el guion, para celdas y pies. */
+.mono-label {
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/** Tarjeta base: el hover que levanta viene de la web. */
+.tarjeta {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.tarjeta:hover {
+  border-color: rgba(255, 255, 255, 0.24);
+  transform: translateY(-3px);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+}
+
+/** Resplandores de fondo del hero de la web, reutilizados en el panel. */
+.brillo-ambiente {
+  position: relative;
+}
+.brillo-ambiente::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      680px 380px at 82% 4%,
+      rgba(33, 199, 234, 0.13),
+      transparent 62%
+    ),
+    radial-gradient(
+      560px 420px at 96% 58%,
+      rgba(255, 47, 134, 0.1),
+      transparent 64%
+    ),
+    radial-gradient(
+      520px 340px at 4% 8%,
+      rgba(140, 85, 210, 0.12),
+      transparent 66%
+    );
+}
+
+/* ---------- Movimiento ---------- */
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/** Entrada escalonada: se le pasa --retraso por style en cada tarjeta. */
+.aparecer {
+  animation: aparecer 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--retraso, 0ms);
+}
+
+@keyframes latido {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(33, 199, 234, 0.45);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(33, 199, 234, 0);
+  }
+}
+
+/** Marca la fase en curso: pulso suave, no distrae. */
+.latido {
+  animation: latido 2.4s ease-out infinite;
+}
+
+@keyframes correr-rail {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 200% 50%;
+  }
+}
+
+/** Barra degradada en movimiento lento, para el borde superior del panel. */
+.rail-vivo {
+  background: linear-gradient(
+    90deg,
+    #ffffff 0%,
+    #21c7ea 25%,
+    #8c55d2 50%,
+    #ff2f86 75%,
+    #ffffff 100%
+  );
+  background-size: 200% 100%;
+  animation: correr-rail 14s linear infinite;
+}
+
+/* Respeta a quien prefiere no ver movimiento. */
+@media (prefers-reduced-motion: reduce) {
+  .aparecer,
+  .latido,
+  .rail-vivo {
+    animation: none;
+  }
+  .tarjeta:hover {
+    transform: none;
+  }
 }

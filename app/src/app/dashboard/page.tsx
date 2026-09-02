@@ -73,25 +73,43 @@ export default async function DashboardResumen() {
   ).length;
 
   const kpis = [
-    { label: "Clientes activos", valor: String(clientesActivos.length) },
-    { label: "MRR (mensualidades activas)", valor: formatoMXN(mrr) },
-    { label: "Gastos del mes", valor: formatoMXN(gastosDelMes) },
     {
-      label: "Cobros pendientes de pago",
+      label: "Clientes activos",
+      valor: String(clientesActivos.length),
+      color: "#21C7EA",
+    },
+    {
+      label: "MRR activo",
+      valor: formatoMXN(mrr),
+      color: "#8C55D2",
+    },
+    {
+      label: "Gastos del mes",
+      valor: formatoMXN(gastosDelMes),
+      color: "#FF2F86",
+    },
+    {
+      label: "Cobros por cobrar",
       valor: String(cobrosPendientes.length),
+      color: "#FFFFFF",
     },
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-12">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {kpis.map((kpi) => (
+        {kpis.map((kpi, i) => (
           <div
             key={kpi.label}
-            className="rounded-xl border border-white/10 bg-white/[0.03] p-5"
+            className="tarjeta aparecer relative overflow-hidden p-5"
+            style={{ "--retraso": `${i * 60}ms` } as React.CSSProperties}
           >
-            <p className="text-xs text-white/50">{kpi.label}</p>
-            <p className="mt-2 text-2xl font-semibold tracking-tight">
+            <span
+              className="absolute inset-y-0 left-0 w-0.5"
+              style={{ background: kpi.color }}
+            />
+            <p className="mono-label">{kpi.label}</p>
+            <p className="mt-2.5 font-display text-[1.7rem] font-extrabold tracking-tight text-white">
               {kpi.valor}
             </p>
           </div>
@@ -99,11 +117,9 @@ export default async function DashboardResumen() {
       </div>
 
       <section>
-        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <h2 className="text-sm font-medium text-white/70">
-            Embudo de entrega
-          </h2>
-          <span className="text-xs text-white/35">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+          <h2 className="eyebrow">Embudo de entrega</h2>
+          <span className="text-xs text-muted">
             Proyectos activos y pausados, por fase
           </span>
         </div>
@@ -111,61 +127,66 @@ export default async function DashboardResumen() {
       </section>
 
       <section>
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-sm font-medium text-white/70">
-            Proyectos en curso
-          </h2>
+        <div className="mb-4 flex items-center justify-between gap-2">
+          <h2 className="eyebrow">Proyectos en curso</h2>
           <Link
             href="/dashboard/clientes"
-            className="text-xs text-[#21C7EA] hover:underline"
+            className="text-xs text-cyan transition-colors hover:text-white"
           >
             Ver todos →
           </Link>
         </div>
-        <div className="overflow-hidden rounded-xl border border-white/10">
+        <div className="tarjeta overflow-hidden hover:translate-y-0 hover:shadow-none">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[640px] text-sm">
-              <thead className="bg-white/[0.03] text-left text-xs text-white/50">
+              <thead className="border-b border-linea bg-white/[0.02] text-left">
                 <tr>
-                  <th className="px-4 py-2.5 font-medium">Cliente</th>
-                  <th className="px-4 py-2.5 font-medium">Avance por fase</th>
-                  <th className="px-4 py-2.5 font-medium">Estado</th>
-                  <th className="px-4 py-2.5 font-medium">Paquete</th>
+                  <th className="mono-label px-5 py-3 font-normal">Cliente</th>
+                  <th className="mono-label px-5 py-3 font-normal">
+                    Avance por fase
+                  </th>
+                  <th className="mono-label px-5 py-3 font-normal">Estado</th>
+                  <th className="mono-label px-5 py-3 font-normal">Paquete</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
                 {(clientes ?? []).slice(0, 8).map((c) => (
-                  <tr key={c.id}>
-                    <td className="px-4 py-2.5">
+                  <tr
+                    key={c.id}
+                    className="transition-colors hover:bg-white/[0.03]"
+                  >
+                    <td className="px-5 py-3.5">
                       <Link
                         href={`/dashboard/clientes/${c.slug}`}
-                        className="hover:text-[#21C7EA]"
+                        className="font-medium text-white transition-colors hover:text-cyan"
                       >
                         {c.nombre_comercial}
                       </Link>
                     </td>
-                    <td className="px-4 py-2.5">
+                    <td className="px-5 py-3.5">
                       <LineaDeFases faseActual={c.fase} variante="compacta" />
                     </td>
-                    <td className="px-4 py-2.5">
+                    <td className="px-5 py-3.5">
                       <span
-                        className={`rounded-full px-2 py-0.5 text-xs ${COLOR_ESTADO[c.estado]}`}
+                        className={`rounded-full px-2.5 py-0.5 font-mono text-[0.62rem] uppercase tracking-widest ${COLOR_ESTADO[c.estado]}`}
                       >
                         {NOMBRES_ESTADO[c.estado]}
                       </span>
                     </td>
-                    <td className="px-4 py-2.5 capitalize text-white/70">
+                    <td className="px-5 py-3.5 capitalize text-muted">
                       {c.paquete ?? "⟨pendiente⟩"}
                     </td>
                   </tr>
                 ))}
                 {(clientes ?? []).length === 0 && (
                   <tr>
-                    <td
-                      colSpan={4}
-                      className="px-4 py-6 text-center text-white/40"
-                    >
-                      Sin clientes registrados todavía.
+                    <td colSpan={4} className="px-5 py-10 text-center">
+                      <p className="text-sm text-muted">
+                        Sin clientes registrados todavía.
+                      </p>
+                      <p className="mono-label mt-2 justify-center text-[0.6rem]">
+                        Se dan de alta desde /nuevo-cliente en el vault
+                      </p>
                     </td>
                   </tr>
                 )}
@@ -176,50 +197,55 @@ export default async function DashboardResumen() {
       </section>
 
       <section>
-        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <h2 className="text-sm font-medium text-white/70">
-            Pendientes abiertos
-          </h2>
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+          <h2 className="eyebrow">Pendientes abiertos</h2>
           <div className="flex items-center gap-3">
             {esperandoAlCliente > 0 && (
-              <span className="rounded-full bg-[#FF2F86]/15 px-2.5 py-0.5 text-xs text-[#FF2F86]">
+              <span className="rounded-full border border-magenta/40 bg-magenta/10 px-2.5 py-0.5 font-mono text-[0.62rem] uppercase tracking-widest text-magenta">
                 {esperandoAlCliente} esperando al cliente
               </span>
             )}
             <Link
               href="/dashboard/pendientes"
-              className="text-xs text-[#21C7EA] hover:underline"
+              className="text-xs text-cyan transition-colors hover:text-white"
             >
               Ver todos →
             </Link>
           </div>
         </div>
-        <div className="overflow-hidden rounded-xl border border-white/10">
+        <div className="tarjeta overflow-hidden hover:translate-y-0 hover:shadow-none">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[560px] text-sm">
-              <thead className="bg-white/[0.03] text-left text-xs text-white/50">
+              <thead className="border-b border-linea bg-white/[0.02] text-left">
                 <tr>
-                  <th className="px-4 py-2.5 font-medium">Descripción</th>
-                  <th className="px-4 py-2.5 font-medium">Cliente</th>
-                  <th className="px-4 py-2.5 font-medium">Responsable</th>
+                  <th className="mono-label px-5 py-3 font-normal">
+                    Descripción
+                  </th>
+                  <th className="mono-label px-5 py-3 font-normal">Cliente</th>
+                  <th className="mono-label px-5 py-3 font-normal">
+                    Responsable
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
                 {(pendientes ?? []).map((p) => (
-                  <tr key={p.id}>
-                    <td className="px-4 py-2.5">
+                  <tr
+                    key={p.id}
+                    className="transition-colors hover:bg-white/[0.03]"
+                  >
+                    <td className="px-5 py-3.5 text-texto">
                       {p.descripcion}
                       {p.depende_de === "cliente" && (
-                        <span className="ml-2 rounded-full bg-[#FF2F86]/15 px-2 py-0.5 text-xs text-[#FF2F86]">
+                        <span className="ml-2 rounded-full border border-magenta/40 bg-magenta/10 px-2 py-0.5 font-mono text-[0.6rem] uppercase tracking-widest text-magenta">
                           cliente
                         </span>
                       )}
                     </td>
-                    <td className="px-4 py-2.5 text-white/70">
+                    <td className="px-5 py-3.5 text-muted">
                       {(p as { clientes?: { nombre_comercial?: string } }).clientes
                         ?.nombre_comercial ?? "— (interno)"}
                     </td>
-                    <td className="px-4 py-2.5 text-white/70">
+                    <td className="px-5 py-3.5 text-muted">
                       {p.responsable ? NOMBRES_DEPARTAMENTO[p.responsable] : "—"}
                     </td>
                   </tr>
@@ -228,7 +254,7 @@ export default async function DashboardResumen() {
                   <tr>
                     <td
                       colSpan={3}
-                      className="px-4 py-6 text-center text-white/40"
+                      className="px-5 py-10 text-center text-sm text-muted"
                     >
                       Sin pendientes abiertos.
                     </td>

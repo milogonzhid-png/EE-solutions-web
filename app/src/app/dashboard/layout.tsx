@@ -1,7 +1,15 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { CerrarSesionBoton } from "@/components/CerrarSesionBoton";
+import { Marca } from "@/components/Logo";
+import { NavPanel } from "@/components/NavPanel";
+
+const ENLACES = [
+  { href: "/dashboard", texto: "Resumen" },
+  { href: "/dashboard/clientes", texto: "Clientes" },
+  { href: "/dashboard/finanzas", texto: "Finanzas" },
+  { href: "/dashboard/pendientes", texto: "Pendientes" },
+];
 
 export default async function DashboardLayout({
   children,
@@ -22,36 +30,55 @@ export default async function DashboardLayout({
 
   if (perfil?.rol !== "admin") redirect("/portal");
 
+  const iniciales = (perfil?.nombre_completo ?? "")
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((p) => p[0])
+    .join("")
+    .toUpperCase();
+
   return (
     <div className="flex min-h-screen flex-1 flex-col">
-      <header className="flex items-center justify-between border-b border-white/10 px-6 py-4">
-        <div className="flex items-center gap-6">
-          <span className="text-sm font-semibold tracking-tight">
-            EE Solutions <span className="text-white/40">· Dirección</span>
-          </span>
-          <nav className="flex gap-4 text-sm text-white/60">
-            <Link href="/dashboard" className="hover:text-white">
-              Resumen
-            </Link>
-            <Link href="/dashboard/clientes" className="hover:text-white">
-              Clientes
-            </Link>
-            <Link href="/dashboard/finanzas" className="hover:text-white">
-              Finanzas
-            </Link>
-            <Link href="/dashboard/pendientes" className="hover:text-white">
-              Pendientes
-            </Link>
-          </nav>
-        </div>
-        <div className="flex items-center gap-3">
-          <span className="text-xs text-white/50">
-            {perfil?.nombre_completo}
-          </span>
-          <CerrarSesionBoton />
+      {/* Hilo degradado de marca arriba de todo, como firma visual. */}
+      <div className="rail-vivo h-0.5 w-full" />
+
+      <header className="sticky top-0 z-50 border-b border-linea bg-ink/85 backdrop-blur-xl">
+        <div className="flex flex-wrap items-center justify-between gap-4 px-6 py-3.5">
+          <div className="flex flex-wrap items-center gap-8">
+            <Marca sublinea="Dirección" idDegradado="eeGradPanel" />
+            <NavPanel enlaces={ENLACES} />
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="hidden items-center gap-2.5 sm:flex">
+              <span
+                className="grid h-8 w-8 place-items-center rounded-lg text-xs font-semibold text-ink"
+                style={{
+                  background:
+                    "linear-gradient(135deg,#21C7EA,#8C55D2 60%,#FF2F86)",
+                }}
+              >
+                {iniciales || "EE"}
+              </span>
+              <span className="text-xs text-muted">
+                {perfil?.nombre_completo}
+              </span>
+            </div>
+            <CerrarSesionBoton />
+          </div>
         </div>
       </header>
-      <main className="flex-1 px-6 py-8">{children}</main>
+
+      <main className="flex-1 px-6 py-9">
+        <div className="mx-auto w-full max-w-[1180px]">{children}</div>
+      </main>
+
+      <footer className="border-t border-linea px-6 py-5">
+        <p className="mono-label mx-auto w-full max-w-[1180px] text-[0.6rem]">
+          EE Solutions · Panel interno
+        </p>
+      </footer>
     </div>
   );
 }

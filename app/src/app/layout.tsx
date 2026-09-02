@@ -9,7 +9,25 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="es" className="h-full antialiased">
-      <body className="min-h-full flex flex-col bg-[#07050A] text-white font-sans">
+      <head>
+        {/*
+          Las mismas tres familias del sitio público (Unbounded para títulos,
+          Instrument Sans para texto, JetBrains Mono para etiquetas). Se cargan
+          por <link> y no con next/font para no depender de que el build
+          alcance Google Fonts por red.
+        */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin=""
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body className="brillo-ambiente flex min-h-full flex-col bg-ink text-texto">
         {children}
       </body>
     </html>

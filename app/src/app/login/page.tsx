@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { Logo } from "@/components/Logo";
 
 export default function LoginPage() {
   const [correo, setCorreo] = useState("");
@@ -60,65 +61,71 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex flex-1 items-center justify-center px-6">
+    <div className="flex flex-1 items-center justify-center px-6 py-16">
       <div className="w-full max-w-sm">
-        <div className="mb-8 text-center">
-          <h1 className="text-2xl font-semibold tracking-tight">
-            EE Solutions
+        <div className="mb-9 flex flex-col items-center text-center">
+          <Logo className="h-10 w-auto" idDegradado="eeGradLogin" />
+          <h1 className="mt-5 font-display text-xl font-extrabold text-white">
+            Panel EE Solutions
           </h1>
-          <p className="mt-1 text-sm text-white/60">
-            Acceso al panel — solo para cuentas invitadas.
+          <p className="mono-label mt-2 text-[0.6rem]">
+            Acceso solo para cuentas invitadas
           </p>
+          {/*
+            basePath ("/app") no se aplica a strings armados a mano — hay que
+            agregarlo explícito, igual que con emailRedirectTo abajo.
+          */}
           <a
-            // basePath ("/app") no se aplica a strings armados a mano — hay
-            // que agregarlo explícito, igual que con emailRedirectTo abajo.
             href="/app/tutorial-acceso-panel.html"
             target="_blank"
             rel="noreferrer"
-            className="mt-2 inline-block text-xs text-[#21C7EA] hover:underline"
+            className="mt-3 inline-block text-xs text-cyan transition-colors hover:text-white"
           >
-            ¿Primera vez? Mira cómo entrar
+            ¿Primera vez? Mira cómo entrar →
           </a>
         </div>
 
         {enviado ? (
           <div className="space-y-4">
-            <div className="rounded-lg border border-[#21C7EA]/30 bg-[#21C7EA]/10 p-4 text-sm">
-              Te mandamos un enlace de acceso a <strong>{correo}</strong>.
-              Ábrelo desde este mismo dispositivo para entrar.
+            <div className="tarjeta hover:translate-y-0 hover:shadow-none">
+              <div className="rail h-0.5 rounded-t-[18px]" />
+              <div className="p-5 text-sm text-texto">
+                Te mandamos un acceso a{" "}
+                <strong className="text-white">{correo}</strong>. Ábrelo desde
+                este mismo dispositivo.
+              </div>
             </div>
 
-            <div className="rounded-lg border border-white/15 bg-white/5 p-4">
-              <p className="mb-3 text-sm text-white/70">
-                ¿El enlace del correo no te funcionó? Ese mismo correo trae
-                también un código de 6 dígitos — escríbelo aquí:
-              </p>
-              <form onSubmit={verificarCodigo} className="space-y-3">
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  required
-                  value={codigo}
-                  onChange={(e) => setCodigo(e.target.value)}
-                  placeholder="123456"
-                  className="w-full rounded-lg border border-white/15 bg-white/5 px-3.5 py-2.5 text-center text-lg tracking-widest outline-none focus:border-[#21C7EA] focus:ring-1 focus:ring-[#21C7EA]"
-                />
-                <button
-                  type="submit"
-                  disabled={verificando}
-                  className="w-full rounded-lg bg-[#8C55D2] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#8C55D2]/90 disabled:opacity-50"
-                >
-                  {verificando ? "Verificando…" : "Verificar código"}
-                </button>
-              </form>
+            <div className="tarjeta hover:translate-y-0 hover:shadow-none">
+              <div className="p-5">
+                <p className="mono-label">O usa el código</p>
+                <p className="mt-2 text-sm text-muted">
+                  El correo trae un código de 6 dígitos. Escríbelo aquí si el
+                  enlace no te funciona.
+                </p>
+                <form onSubmit={verificarCodigo} className="mt-4 space-y-3">
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    required
+                    value={codigo}
+                    onChange={(e) => setCodigo(e.target.value)}
+                    placeholder="123456"
+                    className="w-full rounded-xl border border-linea bg-white/[0.04] px-3.5 py-3 text-center font-mono text-lg tracking-[0.35em] text-white outline-none transition-colors focus:border-cyan"
+                  />
+                  <BotonPrimario cargando={verificando}>
+                    {verificando ? "Verificando…" : "Entrar"}
+                  </BotonPrimario>
+                </form>
+              </div>
             </div>
 
-            {error && <p className="text-sm text-[#FF2F86]">{error}</p>}
+            {error && <p className="text-sm text-magenta">{error}</p>}
           </div>
         ) : (
           <form onSubmit={enviarEnlace} className="space-y-4">
             <div>
-              <label htmlFor="correo" className="mb-1.5 block text-sm text-white/70">
+              <label htmlFor="correo" className="mono-label mb-2">
                 Correo
               </label>
               <input
@@ -128,27 +135,44 @@ export default function LoginPage() {
                 value={correo}
                 onChange={(e) => setCorreo(e.target.value)}
                 placeholder="tu@correo.com"
-                className="w-full rounded-lg border border-white/15 bg-white/5 px-3.5 py-2.5 text-sm outline-none focus:border-[#21C7EA] focus:ring-1 focus:ring-[#21C7EA]"
+                className="w-full rounded-xl border border-linea bg-white/[0.04] px-3.5 py-3 text-sm text-white outline-none transition-colors placeholder:text-white/25 focus:border-cyan"
               />
             </div>
 
-            {error && <p className="text-sm text-[#FF2F86]">{error}</p>}
+            {error && <p className="text-sm text-magenta">{error}</p>}
 
-            <button
-              type="submit"
-              disabled={enviando}
-              className="w-full rounded-lg bg-[#8C55D2] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#8C55D2]/90 disabled:opacity-50"
-            >
-              {enviando ? "Enviando…" : "Enviar enlace de acceso"}
-            </button>
+            <BotonPrimario cargando={enviando}>
+              {enviando ? "Enviando…" : "Enviar acceso"}
+            </BotonPrimario>
 
-            <p className="text-center text-xs text-white/40">
-              ¿No tienes cuenta? Pide que te inviten desde{" "}
-              <span className="text-white/60">Contratación</span>.
+            <p className="mono-label justify-center text-center text-[0.58rem] leading-relaxed">
+              ¿No tienes cuenta? Pide que te inviten desde Contratación
             </p>
           </form>
         )}
       </div>
     </div>
+  );
+}
+
+/** Botón con el degradado de marca y el lift de los CTA del sitio. */
+function BotonPrimario({
+  cargando,
+  children,
+}: {
+  cargando: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="submit"
+      disabled={cargando}
+      className="w-full rounded-full px-4 py-3 text-sm font-semibold text-[#0B0710] transition-all hover:-translate-y-0.5 hover:shadow-[0_12px_30px_rgba(255,47,134,.25)] disabled:translate-y-0 disabled:opacity-50 disabled:shadow-none"
+      style={{
+        background: "linear-gradient(90deg,#FFFFFF,#21C7EA 45%,#8C55D2 100%)",
+      }}
+    >
+      {children}
+    </button>
   );
 }
