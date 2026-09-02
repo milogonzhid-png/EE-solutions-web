@@ -4,6 +4,16 @@
   status = 301
   force = true
 
+# "/app" a secas NO lo cubre la regla "/app/*" de abajo: Netlify le agrega la
+# diagonal final y Next.js (trailingSlash: false) se la quita, y se ciclan
+# infinitamente -> ERR_TOO_MANY_REDIRECTS. Se proxea explicitamente. Tiene que
+# ir ANTES de la regla con splat.
+[[redirects]]
+  from = "/app"
+  to = "https://ee-solutions-app.netlify.app/app"
+  status = 200
+  force = true
+
 # Dashboard (proyecto Next.js aparte, repo EE-solutions-app, deploy propio en
 # Netlify) servido bajo el mismo dominio — proxy, no redirect: el visitante
 # nunca ve ee-solutions-app.netlify.app, la URL en el navegador se queda en

@@ -22,5 +22,7 @@ export async function GET(request: Request) {
   const hostPublico = request.headers.get("x-forwarded-host");
   const origen = hostPublico ? `https://${hostPublico}` : url.origin;
 
-  return NextResponse.redirect(`${origen}/app`);
+  // Nunca a "/app" pelado: el proxy del sitio principal solo cubre
+  // "/app/*" y "/app" entra en un ciclo de diagonal final.
+  return NextResponse.redirect(`${origen}/app/dashboard`);
 }

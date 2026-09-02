@@ -52,9 +52,11 @@ export default function LoginPage() {
       setError("Código incorrecto o vencido. Pide uno nuevo e intenta de nuevo.");
       return;
     }
-    // basePath no aplica a strings armados a mano — forzamos la recarga
-    // completa a /app para que el middleware te mande a dashboard/portal.
-    window.location.href = `${window.location.origin}/app`;
+    // basePath no aplica a strings armados a mano. Se va a /app/dashboard (no
+    // a /app pelado, que entra en un ciclo de diagonal final con el proxy del
+    // sitio principal); si el usuario es cliente, el middleware lo manda a
+    // /app/portal.
+    window.location.href = `${window.location.origin}/app/dashboard`;
   }
 
   return (
