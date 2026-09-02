@@ -1,0 +1,232 @@
+<!--
+PLANTILLA — Documento descargable del Agreement (EE Solutions → cliente)
+Se copia a 02-Clientes/<slug>/08-Agreement.html y se rellenan los {{placeholders}}.
+Contenido fuente: 08-Agreement.md (no inventar aquí nada que no esté ya aprobado ahí).
+Para generar el PDF descargable: node ~/.claude/scripts/pdf-export/export.js 08-Agreement.html 08-Agreement.pdf
+Paleta y logo son de EE Solutions (01-Empresa/06-Identidad-de-Marca.md) — nunca la paleta del cliente.
+-->
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agreement — {{negocio}}</title>
+<style>
+  :root {
+    --ink: #07050A;
+    --muted: #6B6478;
+    --paper: #FAF9FC;
+    --linea: #E4E0EC;
+    --cyan: #21C7EA;
+    --violet: #8C55D2;
+    --magenta: #FF2F86;
+    --gradient-marca: linear-gradient(135deg, var(--cyan), var(--violet), var(--magenta));
+    --superficie: #F3F1F8;
+  }
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body {
+    margin: 0;
+    background: var(--superficie);
+    color: var(--ink);
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.55;
+  }
+  .page {
+    max-width: 720px;
+    margin: 0 auto;
+    background: var(--paper);
+    padding: 48px 44px;
+  }
+  .barra { height: 6px; background: var(--gradient-marca); }
+  .header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-bottom: 24px; margin-bottom: 24px; border-bottom: 2px solid var(--ink);
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .logo-mark {
+    height: 30px; padding: 5px 7px; border-radius: 7px;
+    background: #000000; display: flex; align-items: center; justify-content: center;
+  }
+  .logo-mark svg { height: 100%; width: auto; }
+  .brand-name { font-weight: 700; font-size: 15px; }
+  .brand-sub { font-size: 11.5px; color: var(--muted); }
+  .doc-title { text-align: right; }
+  .doc-title h1 { margin: 0; font-size: 20px; font-weight: 700; }
+  .doc-title .sub { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+
+  .intro {
+    font-size: 13.5px; color: var(--muted); background: var(--superficie);
+    border-radius: 6px; padding: 14px 18px; margin-bottom: 28px;
+  }
+  .partes { font-size: 14px; margin-bottom: 30px; }
+  .partes b { color: var(--violet); }
+
+  .clausula { margin-bottom: 22px; }
+  .clausula .num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; border-radius: 6px; background: var(--gradient-marca);
+    color: var(--ink); font-size: 12px; font-weight: 700; margin-right: 8px;
+  }
+  .clausula h2 { display: inline; font-size: 14.5px; font-weight: 700; }
+  .clausula p, .clausula ul { font-size: 13.5px; margin: 8px 0 0; color: #241F2B; }
+  .clausula ul { padding-left: 30px; }
+  .clausula table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 13px; }
+  .clausula td, .clausula th { padding: 6px 8px; border-bottom: 1px solid var(--linea); }
+  .clausula th { text-align: left; color: var(--muted); font-weight: 600; font-size: 11.5px; text-transform: uppercase; }
+  .clausula td:last-child, .clausula th:last-child { text-align: right; }
+
+  .firma-tabla { width: 100%; margin-top: 40px; border-collapse: collapse; }
+  .firma-tabla td { width: 50%; padding-top: 50px; border-top: 1px solid var(--ink); font-size: 13px; text-align: center; }
+  .firma-tabla .nombre { font-weight: 600; margin-bottom: 2px; }
+
+  .legal-footer {
+    margin-top: 32px; padding: 14px 18px; border-radius: 6px; background: var(--superficie);
+    font-size: 11.5px; color: var(--muted); line-height: 1.6;
+  }
+  footer.doc-footer {
+    margin-top: 24px; padding-top: 14px; border-top: 1px solid var(--linea);
+    display: flex; justify-content: space-between; font-size: 11px; color: var(--muted);
+  }
+
+  /* Compacto: tiene que caber en una sola hoja carta. No es la versión "respirada" de pantalla. */
+  @media print {
+    body { background: var(--paper); line-height: 1.22; }
+    .page { max-width: 100%; padding: 10px 20px 8px; }
+    .demo-flag { padding: 3px; font-size: 10px; }
+    .header { padding-bottom: 5px; margin-bottom: 6px; }
+    .logo-mark { height: 18px; padding: 2px 4px; }
+    .brand-name { font-size: 11px; }
+    .brand-sub { font-size: 8.5px; }
+    .doc-title h1 { font-size: 14px; }
+    .doc-title .sub { font-size: 9.5px; }
+    .intro { font-size: 10px; padding: 5px 8px; margin-bottom: 6px; line-height: 1.25; }
+    .partes { font-size: 11px; margin-bottom: 6px; }
+    .clausula { margin-bottom: 5px; }
+    .clausula .num { width: 14px; height: 14px; font-size: 9px; margin-right: 4px; border-radius: 4px; }
+    .clausula h2 { font-size: 11px; }
+    .clausula p, .clausula ul { font-size: 10px; margin: 2px 0 0; line-height: 1.25; }
+    .clausula ul { padding-left: 16px; }
+    .clausula ul li { margin-bottom: 0; }
+    .clausula table { font-size: 9.5px; margin-top: 2px; }
+    .clausula td, .clausula th { padding: 1px 5px; }
+    .firma-tabla { margin-top: 8px; }
+    .firma-tabla td { padding-top: 12px; font-size: 10px; }
+    .legal-footer { margin-top: 5px; padding: 4px 8px; font-size: 8.5px; line-height: 1.25; }
+    footer.doc-footer { margin-top: 4px; padding-top: 4px; font-size: 8px; }
+    .clausula { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="barra"></div>
+<div class="page">
+
+  <div class="header">
+    <div class="brand">
+      <div class="logo-mark">
+        <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="eeGrad-agreement" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#21C7EA"/>
+              <stop offset="50%" stop-color="#8C55D2"/>
+              <stop offset="100%" stop-color="#FF2F86"/>
+            </linearGradient>
+          </defs>
+          <g transform="translate(10,10) skewX(-10)">
+            <path d="M0,0 H70 V22 H18 V39 H58 V61 H18 V78 H70 V100 H0 Z" fill="#FFFFFF"/>
+          </g>
+          <g transform="translate(112,10) skewX(-10)">
+            <path d="M0,0 H70 V22 H18 V39 H58 V61 H18 V78 H70 V100 H0 Z" fill="url(#eeGrad-agreement)"/>
+          </g>
+        </svg>
+      </div>
+      <div>
+        <div class="brand-name">EE Solutions</div>
+        <div class="brand-sub">Mérida, Yucatán</div>
+      </div>
+    </div>
+    <div class="doc-title">
+      <h1>Agreement</h1>
+      <div class="sub">{{fecha}}</div>
+    </div>
+  </div>
+
+  <div class="intro">Documento simbólico de claridad entre las partes, no un contrato legal formal — una página con lo que de verdad importa, para que no haya problemas a futuro.</div>
+
+  <p class="partes"><b>Entre EE Solutions</b> (Edgar Emilio González Hidalgo y Eduardo Gallegos Bolaños-Cacho) <b>y {{negocio}}</b> ({{representante}}), con fecha {{fecha}}.</p>
+
+  <div class="clausula">
+    <span class="num">1</span><h2>Qué incluye — Paquete {{paquete}}</h2>
+    <ul>{{lista_incluye}}</ul>
+  </div>
+
+  <div class="clausula">
+    <span class="num">2</span><h2>Qué NO incluye</h2>
+    <ul>{{lista_no_incluye}}</ul>
+    <p>Cualquier cosa fuera de esta lista se cotiza aparte antes de hacerse.</p>
+  </div>
+
+  <div class="clausula">
+    <span class="num">3</span><h2>Precio y forma de pago</h2>
+    <table>
+      <tr><th>Momento</th><th>Monto</th></tr>
+      <tr><td>Anticipo — 50%, al firmar</td><td>${{anticipo}}</td></tr>
+      <tr><td>Saldo — 50%, antes de publicar</td><td>${{saldo}}</td></tr>
+      <tr><td>Suscripción mensual — desde el mes 1, incluida en el paquete</td><td>${{mantenimiento}}/mes</td></tr>
+    </table>
+    <p><b>Setup: ${{total}} MXN + ${{mantenimiento}} MXN/mes desde el mes 1.</b> El paquete siempre incluye las dos partes — no se compra solo el setup. No se reembolsa el anticipo una vez iniciada la Fase 3. La suscripción se cancela más adelante avisando con 30 días (punto 9). EE Solutions no emite factura (CFDI).</p>
+  </div>
+
+  <div class="clausula">
+    <span class="num">4</span><h2>Plazo</h2>
+    <p>{{plazo}} días hábiles desde el anticipo. Se pausa si {{negocio}} no entrega material o aprobaciones a tiempo.</p>
+  </div>
+
+  <div class="clausula">
+    <span class="num">5</span><h2>Lo que necesitamos de ti</h2>
+    <ul>{{lista_necesitamos}}</ul>
+  </div>
+
+  <div class="clausula">
+    <span class="num">6</span><h2>Ajustes incluidos</h2>
+    <p>{{rondas_ajuste}} rondas sobre la versión de prueba. Ajustes adicionales se cotizan aparte.</p>
+  </div>
+
+  <div class="clausula">
+    <span class="num">7</span><h2>De quién es qué</h2>
+    <p>El dominio se registra a nombre de {{negocio}}. Al liquidar el 100%, el diseño y contenido son suyos. EE Solutions conserva sus componentes reutilizables y el derecho a mostrar el proyecto en su portafolio, salvo aviso en contrario por escrito.</p>
+  </div>
+
+  <div class="clausula">
+    <span class="num">8</span><h2>Garantía</h2>
+    <p>Corregimos sin costo errores de nuestro desarrollo reportados dentro de 30 días naturales tras publicar. No cubre plataformas de terceros ni resultados comerciales.</p>
+  </div>
+
+  <div class="clausula">
+    <span class="num">9</span><h2>Si algo se cancela</h2>
+    <p>Cancela el cliente sin incumplimiento de EE Solutions: el anticipo no se reembolsa. Cancela EE Solutions sin causa: se devuelve la parte proporcional no ejecutada.</p>
+  </div>
+
+  <div class="clausula">
+    <span class="num">10</span><h2>Datos personales</h2>
+    <p>EE Solutions trata los datos a los que acceda solo para este proyecto (LFPDPPP). {{negocio}} es responsable de los datos que su sitio y asistente recaben de sus propios clientes.</p>
+  </div>
+
+  <table class="firma-tabla">
+    <tr>
+      <td><div class="nombre">{{firmante_ee}}</div>EE Solutions</td>
+      <td><div class="nombre">{{firmante_cliente}}</div>{{negocio}}</td>
+    </tr>
+  </table>
+
+  <div class="legal-footer">Documento simbólico de claridad entre las partes — no es un contrato legal formal.</div>
+
+  <footer class="doc-footer">
+    <span>EE Solutions</span>
+    <span>Ficha de pago en tu carpeta de cliente</span>
+  </footer>
+
+</div>
+</body>
+</html>

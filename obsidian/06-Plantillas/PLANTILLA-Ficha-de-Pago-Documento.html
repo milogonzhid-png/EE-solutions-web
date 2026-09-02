@@ -1,0 +1,243 @@
+<!--
+PLANTILLA — Documento descargable de la Ficha de Pago (EE Solutions → cliente)
+Se copia a 02-Clientes/<slug>/06-Ficha-de-Pago.html y se rellenan los {{placeholders}}.
+Contenido fuente: 06-Ficha-de-Pago.md (no inventar aquí nada que no esté ya aprobado ahí).
+Para generar el PDF descargable: node ~/.claude/scripts/pdf-export/export.js 06-Ficha-de-Pago.html 06-Ficha-de-Pago.pdf
+Paleta y logo son de EE Solutions (01-Empresa/06-Identidad-de-Marca.md) — nunca la paleta del cliente.
+-->
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha de pago — {{negocio}}</title>
+<style>
+  :root {
+    --ink: #07050A;
+    --muted: #6B6478;
+    --paper: #FAF9FC;
+    --linea: #E4E0EC;
+    --cyan: #21C7EA;
+    --violet: #8C55D2;
+    --magenta: #FF2F86;
+    --gradient-marca: linear-gradient(135deg, var(--cyan), var(--violet), var(--magenta));
+    --superficie: #F3F1F8;
+  }
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body {
+    margin: 0;
+    background: var(--superficie);
+    color: var(--ink);
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .page {
+    max-width: 760px;
+    margin: 0 auto;
+    background: var(--paper);
+    padding: 48px 44px;
+  }
+  .barra { height: 6px; background: var(--gradient-marca); }
+  .header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-bottom: 24px; margin-bottom: 28px; border-bottom: 2px solid var(--ink);
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .logo-mark {
+    height: 30px; padding: 5px 7px; border-radius: 7px;
+    background: #000000; display: flex; align-items: center; justify-content: center;
+  }
+  .logo-mark svg { height: 100%; width: auto; }
+  .brand-name { font-weight: 700; font-size: 15px; }
+  .brand-sub { font-size: 11.5px; color: var(--muted); }
+  .doc-title { text-align: right; }
+  .doc-title h1 { margin: 0; font-size: 20px; font-weight: 700; }
+  .doc-title .folio { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+
+  .meta-grid {
+    display: grid; grid-template-columns: repeat(4,1fr); gap: 16px;
+    margin-bottom: 32px; padding: 16px 0; border-bottom: 1px solid var(--linea);
+  }
+  .meta-grid-5 { grid-template-columns: repeat(5,1fr); }
+  .meta-item .label { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-bottom: 3px; }
+  .meta-item .valor { font-size: 14px; font-weight: 600; }
+  .meta-item .valor.destacado { color: var(--magenta); }
+
+  .aviso-mensualidad {
+    background: var(--superficie); border: 1.5px solid var(--violet);
+    border-radius: 8px; padding: 14px 18px; margin-bottom: 28px;
+    font-size: 13px; line-height: 1.6;
+  }
+  .aviso-mensualidad b { color: var(--violet); }
+
+  h2.section {
+    font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--violet); margin: 32px 0 14px;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  table.tabla-incluye { table-layout: fixed; }
+  table.tabla-incluye th:first-child, table.tabla-incluye td:first-child { width: 34%; }
+  th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); padding: 8px 10px; border-bottom: 1.5px solid var(--ink); }
+  td { padding: 10px 10px; border-bottom: 1px solid var(--linea); vertical-align: top; }
+  td:last-child, th:last-child { text-align: right; white-space: nowrap; }
+  tr.total td { border-top: 2px solid var(--ink); border-bottom: none; font-weight: 700; font-size: 15px; padding-top: 14px; }
+
+  ul.lista { margin: 0; padding-left: 18px; font-size: 13.5px; line-height: 1.7; }
+  ul.lista.excluye li { color: var(--muted); }
+
+  .callout {
+    background: var(--superficie); border-left: 3px solid var(--magenta);
+    padding: 14px 18px; border-radius: 4px; font-size: 13px; line-height: 1.6; margin-bottom: 14px;
+  }
+  .callout b { color: var(--ink); }
+
+  .firma-linea { margin-top: 40px; padding-top: 18px; border-top: 1px solid var(--linea); font-size: 12.5px; color: var(--muted); text-align: center; }
+
+  footer {
+    margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--linea);
+    display: flex; justify-content: space-between; font-size: 11px; color: var(--muted);
+  }
+
+  .total-line {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 10px 10px 0; margin-top: 4px; border-top: 2px solid var(--ink);
+    font-weight: 700; font-size: 15px;
+  }
+  .total-line .sub { font-size: 11.5px; font-weight: 400; color: var(--muted); }
+
+  /* Compacto: tiene que caber en una sola hoja carta. No es la versión "respirada" de pantalla. */
+  @media print {
+    body { background: var(--paper); }
+    .page { max-width: 100%; padding: 14px 22px 10px; }
+    .header { padding-bottom: 8px; margin-bottom: 10px; }
+    .logo-mark { height: 20px; padding: 3px 5px; }
+    .brand-name { font-size: 12px; }
+    .aviso-mensualidad { padding: 8px 12px; margin-bottom: 10px; font-size: 10.5px; line-height: 1.35; }
+    .brand-sub { font-size: 9px; }
+    .doc-title h1 { font-size: 15px; }
+    .doc-title .folio { font-size: 10px; }
+    .meta-grid { margin-bottom: 10px; padding: 6px 0; gap: 8px; }
+    .meta-item .label { font-size: 8.5px; margin-bottom: 1px; }
+    .meta-item .valor { font-size: 11.5px; }
+    h2.section { font-size: 9.5px; margin: 10px 0 5px; }
+    table { font-size: 11px; }
+    th { font-size: 9px; padding: 3px 8px; }
+    td { padding: 3px 8px; line-height: 1.25; }
+    tr.total td { padding-top: 5px; font-size: 12px; }
+    .total-line { padding: 4px 8px 0; margin-top: 1px; font-size: 12px; }
+    ul.lista { font-size: 11px; line-height: 1.25; padding-left: 16px; }
+    .callout { padding: 6px 10px; margin-bottom: 4px; font-size: 10px; line-height: 1.25; }
+    .firma-linea { margin-top: 10px; padding-top: 6px; font-size: 10px; }
+    footer { margin-top: 8px; padding-top: 6px; font-size: 9px; }
+    .demo-flag { padding: 3px; font-size: 10px; }
+    table, .callout, ul.lista { break-inside: avoid; }
+  }
+  @media (max-width: 560px) {
+    .meta-grid { grid-template-columns: repeat(2,1fr); }
+    .page { padding: 32px 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="barra"></div>
+<div class="page">
+
+  <div class="header">
+    <div class="brand">
+      <div class="logo-mark">
+        <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="eeGrad-ficha" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#21C7EA"/>
+              <stop offset="50%" stop-color="#8C55D2"/>
+              <stop offset="100%" stop-color="#FF2F86"/>
+            </linearGradient>
+          </defs>
+          <g transform="translate(10,10) skewX(-10)">
+            <path d="M0,0 H70 V22 H18 V39 H58 V61 H18 V78 H70 V100 H0 Z" fill="#FFFFFF"/>
+          </g>
+          <g transform="translate(112,10) skewX(-10)">
+            <path d="M0,0 H70 V22 H18 V39 H58 V61 H18 V78 H70 V100 H0 Z" fill="url(#eeGrad-ficha)"/>
+          </g>
+        </svg>
+      </div>
+      <div>
+        <div class="brand-name">EE Solutions</div>
+        <div class="brand-sub">Mérida, Yucatán</div>
+      </div>
+    </div>
+    <div class="doc-title">
+      <h1>Ficha de pago</h1>
+      <div class="folio">Folio {{folio}} · {{fecha}}</div>
+    </div>
+  </div>
+
+  <div class="meta-grid meta-grid-5">
+    <div class="meta-item"><div class="label">Para</div><div class="valor">{{negocio}}</div></div>
+    <div class="meta-item"><div class="label">Paquete</div><div class="valor">{{paquete}}</div></div>
+    <div class="meta-item"><div class="label">Setup (único)</div><div class="valor">${{total}} MXN</div></div>
+    <div class="meta-item"><div class="label">Mensualidad</div><div class="valor destacado">${{mantenimiento}}/mes</div></div>
+    <div class="meta-item"><div class="label">Contacto</div><div class="valor">{{whatsapp_oficial}}</div></div>
+  </div>
+
+  <div class="aviso-mensualidad"><b>Esto es lo que vas a pagar:</b> un setup único de <b>${{total}} MXN</b> y una suscripción mensual de <b>${{mantenimiento}} MXN/mes</b> desde el mes 1. El paquete siempre incluye las dos partes — no es un extra que se agrega después. Se puede cancelar más adelante avisando con 30 días; no se puede comprar solo el setup.</div>
+
+  <h2 class="section">Qué estás pagando — desglose del paquete {{paquete}}</h2>
+  <table class="tabla-incluye">
+    <thead><tr><th>Incluye</th><th>Detalle</th></tr></thead>
+    <tbody>
+      <!-- Una fila por característica real del paquete (ver 01-Paquetes-de-Servicio.md) — no inventar precio por línea, el total va abajo. -->
+      {{filas_incluye_setup}}
+    </tbody>
+  </table>
+  <div class="total-line"><span>Total del proyecto <span class="sub">(pago único, ver "Cómo se paga")</span></span><span>${{total}} MXN</span></div>
+
+  <h2 class="section">Cómo se paga</h2>
+  <table>
+    <thead><tr><th>Momento</th><th>Cuándo</th><th>Monto</th></tr></thead>
+    <tbody>
+      <tr><td>Anticipo — 50%</td><td>Al confirmar y arrancar</td><td>${{anticipo}}</td></tr>
+      <tr><td>Saldo — 50%</td><td>Antes de publicar en tu dominio</td><td>${{saldo}}</td></tr>
+    </tbody>
+  </table>
+
+  <h2 class="section">Datos para transferencia</h2>
+  <table>
+    <tbody>
+      <tr><td>Banco</td><td colspan="2">{{banco}}</td></tr>
+      <tr><td>Titular</td><td colspan="2">{{titular}}</td></tr>
+      <tr><td>CLABE</td><td colspan="2">{{clabe}}</td></tr>
+    </tbody>
+  </table>
+
+  <h2 class="section">Suscripción mensual — incluida en el paquete, no es un extra</h2>
+  <table class="tabla-incluye">
+    <thead><tr><th>Incluye</th><th>Detalle</th></tr></thead>
+    <tbody>
+      {{filas_incluye_mensual}}
+    </tbody>
+  </table>
+  <div class="total-line"><span>Mantenimiento y soporte <span class="sub">(cancelable avisando con 30 días)</span></span><span>${{mantenimiento}} / mes</span></div>
+
+  <h2 class="section">Lo que no está incluido</h2>
+  <ul class="lista excluye">
+    <li>{{excluido_1}}</li>
+    <li>{{excluido_2}}</li>
+    <li>Cambios fuera de lo acordado — se cotizan antes de hacerse, nunca sorpresa.</li>
+  </ul>
+
+  <div style="margin-top:28px;">
+    <div class="callout"><b>No emitimos factura.</b> EE Solutions no factura (CFDI). Esta ficha es comprobante de la operación, pero no es deducible de impuestos.</div>
+    <div class="callout"><b>El anticipo aparta tu lugar.</b> Trabajamos pocos proyectos a la vez. Una vez iniciada la Fase 3, el anticipo no se reembolsa.</div>
+  </div>
+
+  <div class="firma-linea">Dudas de esto: Emilio · WhatsApp {{whatsapp_oficial}}</div>
+
+  <footer>
+    <span>EE Solutions</span>
+    <span>Agreement en tu carpeta de cliente</span>
+  </footer>
+
+</div>
+</body>
+</html>
